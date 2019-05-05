@@ -1,5 +1,7 @@
 # GoTry
 
+**Warning: far from done. do not use.**
+
 A small and highly flexible Go library for non-blockingly retrying potentially
 failing operations and preserving their return values once they succeed.
 
