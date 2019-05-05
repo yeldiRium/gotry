@@ -77,7 +77,7 @@ func TestReturnChannelOption(t *testing.T) {
 }
 
 func TestNewRetryOptionsWithDefault(t *testing.T) {
-	options := newRetryOptionsWithDefault()
+	options := NewRetryOptionsWithDefault()
 
 	if options.Delay != defaultDelay {
 		t.Errorf("The default delay was not set correctly. Expected %v, got %v", defaultDelay, options.Delay)
@@ -107,7 +107,7 @@ func TestNewRetryOptionsWithDefaultAndAdditionalOptions(t *testing.T) {
 	afterRetryLimit := func(err error) {}
 	returnChannel := make(chan *RetryResult)
 
-	options := newRetryOptionsWithDefault(
+	options := NewRetryOptionsWithDefault(
 		ReturnChannel(returnChannel),
 		Delay(delay),
 		AfterRetry(afterRetry),
