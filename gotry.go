@@ -7,26 +7,14 @@ import (
 // Try to execute the given function f and repeat if f returns an error.
 //
 // There are multiple RetryOptions available:
-// * Delay:           How long to wait inbetween calls to f
-//        Default: 0s
-// * MaxTries:        How many errors returned from f should be tolerated before
-//                    giving up.
-//        Default: 5
-// * Timeout:         How long overall the retries are allowed to take before a-
-//                    borting.
-//        Default: 5s
-// * AfterRetry:      A function that is called with the resulting error after
-//                    every failing call to f.
-//        Default: nil
-// * AfterRetryLimit: A function that is called with the latest error after rea-
-//                    ching MaxTries.
-//        Default: nil
-// * AfterTimeout:    A function that is called with the latest error after rea-
-//                    ching Timeout.
-//        Default: nil
-// * ReturnChannel:   A channel that replaces the otherwise created channel to
-//                    which the resulting value in case of success is sent.
-//        Default: a new one is created
+//
+// * Delay            = 0s   How long to wait inbetween calls to f.
+// * MaxTries:        = 5    How many errors returned from f should be tolerated before giving up.
+// * Timeout:         = 5s   How long overall the retries are allowed to take before aborting.
+// * AfterRetry:      = nil  A function that is called with the resulting error after every failing call to f.
+// * AfterRetryLimit: = nil  A function that is called with the latest error after reaching MaxTries.
+// * AfterTimeout:    = nil  A function that is called with the latest error after reaching Timeout.
+// * ReturnChannel:   = nil  A channel that replaces the otherwise created channel to which the resulting value in case of success is sent.
 //
 // Its return values are:
 // * a chan RetryResult: The channel to which the result of a successful call to f is sent.
