@@ -13,3 +13,9 @@ func TestIsMaxTriesReached(t *testing.T) {
 		t.Error("ErrMaxTriesReached is somehow broken.")
 	}
 }
+
+func TestIsFIsMissing(t *testing.T) {
+	if !IsFIsMissing(ErrFIsMissing) {
+		t.Error("ErrFIsMissing is somehow broken.")
+	}
+}

@@ -4,8 +4,37 @@ import (
 	"time"
 )
 
-// Try ...
+// Try to execute the given function f and repeat if f returns an error.
+//
+// There are multiple RetryOptions available:
+// * Delay:           How long to wait inbetween calls to f
+//        Default: 0s
+// * MaxTries:        How many errors returned from f should be tolerated before
+//                    giving up.
+//        Default: 5
+// * Timeout:         How long overall the retries are allowed to take before a-
+//                    borting.
+//        Default: 5s
+// * AfterRetry:      A function that is called with the resulting error after
+//                    every failing call to f.
+//        Default: nil
+// * AfterRetryLimit: A function that is called with the latest error after rea-
+//                    ching MaxTries.
+//        Default: nil
+// * AfterTimeout:    A function that is called with the latest error after rea-
+//                    ching Timeout.
+//        Default: nil
+// * ReturnChannel:   A channel that replaces the otherwise created channel to
+//                    which the resulting value in case of success is sent.
+//        Default: a new one is created
+//
+// Its return values are:
+// * a chan RetryResult: The channel to which the result of a successful call to f is sent.
+// * an error:           If the call to Try was misconfigured.
 func Try(f func() (interface{}, error), options ...RetryOption) (<-chan *RetryResult, error) {
+	if f == nil {
+		return nil, ErrFIsMissing
+	}
 	retryOptions := NewRetryOptionsWithDefault(options...)
 	resultChannel := make(chan *RetryResult)
 	go func() {

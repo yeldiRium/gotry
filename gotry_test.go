@@ -177,6 +177,13 @@ func TestTypecastingAfterSucceeding(t *testing.T) {
 	}
 }
 
+func TestCallingTryWithNilAsFReturnsError(t *testing.T) {
+	_, err := Try(nil)
+	if err != ErrFIsMissing {
+		t.Errorf("Calling Try with nil resulted in unexpected error %v. Expected %v.", err, ErrFIsMissing)
+	}
+}
+
 /*
 TODO: make this test pass. this library needs to be able to handle long,
 blocking operations. it is goTRY and should absolutely be usable for single-exe-
