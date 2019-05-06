@@ -66,6 +66,16 @@ func TestAfterRetryLimitOption(t *testing.T) {
 	}
 }
 
+func TestAfterTimeoutOption(t *testing.T) {
+	options := setupDefaultOptions()
+	afterTimeout := func(err error) {}
+	AfterTimeout(afterTimeout)(options)
+
+	if options.AfterTimeout == nil {
+		t.Errorf("AfterTimeout() did not set the after timeout function.")
+	}
+}
+
 func TestReturnChannelOption(t *testing.T) {
 	options := setupDefaultOptions()
 	returnChannel := make(chan *RetryResult)

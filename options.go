@@ -6,7 +6,7 @@ import (
 
 const (
 	defaultMaxTries = 5
-	defaultDelay    = time.Duration(500) * time.Millisecond
+	defaultDelay    = time.Duration(0)
 	defaultTimeout  = time.Duration(5) * time.Second
 )
 
@@ -19,6 +19,7 @@ type RetryOptions struct {
 	Timeout         time.Duration
 	AfterRetry      func(error)
 	AfterRetryLimit func(error)
+	AfterTimeout    func(error)
 	ReturnChannel   chan *RetryResult
 }
 
@@ -77,6 +78,14 @@ func AfterRetryLimit(afterRetryLimit func(err error)) RetryOption {
 	}
 }
 
+// AfterTimeout sets the AfterTimeout function which is called once the retry
+// operation times out.
+func AfterTimeout(afterTimeout func(err error)) RetryOption {
+	return func(options *RetryOptions) {
+		options.AfterTimeout = afterTimeout
+	}
+}
+
 // ReturnChannel sets the ReturnChannel option to which the results of the retry
 // process are sent. Use this if you want to explicitly create your own channel.
 // Otherwise one will be created.
@@ -95,6 +104,7 @@ func NewRetryOptionsWithDefault(options ...RetryOption) *RetryOptions {
 		Timeout:         defaultTimeout,
 		AfterRetry:      nil,
 		AfterRetryLimit: nil,
+		AfterTimeout:    nil,
 		ReturnChannel:   make(chan *RetryResult),
 	}
 

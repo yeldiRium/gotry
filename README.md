@@ -1,7 +1,5 @@
 # GoTry
 
-**Warning: far from done. do not use.**
-
 A small and highly flexible Go library for non-blockingly retrying potentially
 failing operations and preserving their return values once they succeed.
 
@@ -11,7 +9,7 @@ based on the latter.
 
 I didn't want to use either of the two because neither
 handles return values of the retried operations, which is crucial for things
-like connecting to a database which may be offline for a short period of time.
+like connecting to a database that may be offline for a short period of time.
 
 Also I like my libraries tested.
 
@@ -23,9 +21,11 @@ package something
 import "github.com/yeldiRium/gotry"
 
 func main() {
-    resultChannel, err := gotry.Try(func() (*ConnectionHandle, error) {
-        return connectToSomeDatabaseWhichMightFailButOtherwiseReturnsAHandle()
-    })
+    resultChannel, err := gotry.Try(
+        func() (*ConnectionHandle, error) {
+            return connectToSomeDatabaseWhichMightFailButOtherwiseReturnsAHandle()
+        },
+    )
 
     // do some other things
 
@@ -53,3 +53,5 @@ func main() {
     }
 }
 ```
+
+Take a look at the [available options](./options.go) for more.
