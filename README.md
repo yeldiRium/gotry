@@ -1,6 +1,8 @@
 # GoTry
 
-[![GoDoc](https://godoc.org/github.com/yeldiRium/gotry?status.svg)](https://godoc.org/github.com/yeldiRium/gotry) [![codecov](https://codecov.io/gh/yeldiRium/gotry/branch/master/graph/badge.svg)](https://codecov.io/gh/yeldiRium/gotry)
+[![GoDoc](https://godoc.org/github.com/yeldiRium/gotry?status.svg)](https://godoc.org/github.com/yeldiRium/gotry)
+[![codecov](https://codecov.io/gh/yeldiRium/gotry/branch/master/graph/badge.svg)](https://codecov.io/gh/yeldiRium/gotry)
+[![Go Report Card](https://goreportcard.com/badge/github.com/yeldiRium/gotry)](https://goreportcard.com/report/github.com/yeldiRium/gotry)
 
 A small and highly flexible Go library for non-blockingly retrying potentially
 failing operations and preserving their return values once they succeed.

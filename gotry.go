@@ -8,7 +8,7 @@ import (
 //
 // There are multiple RetryOptions available:
 //
-// * Delay            = 0s   How long to wait inbetween calls to f.
+// * Delay            = 0s   How long to wait between calls to f.
 // * MaxTries:        = 5    How many errors returned from f should be tolerated before giving up.
 // * Timeout:         = 5s   How long overall the retries are allowed to take before aborting.
 // * AfterRetry:      = nil  A function that is called with the resulting error after every failing call to f.

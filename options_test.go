@@ -22,7 +22,7 @@ func TestDelayOption(t *testing.T) {
 	Delay(newDelay)(options)
 
 	if options.Delay != newDelay {
-		t.Errorf("Delay() did not set the delay on RetryOptions correcty. Expected %v, got %v.", newDelay, options.Delay)
+		t.Errorf("Delay() did not set the delay on RetryOptions correctly. Expected %v, got %v.", newDelay, options.Delay)
 	}
 }
 
@@ -32,7 +32,7 @@ func TestMaxTriesOption(t *testing.T) {
 	MaxTries(maxTries)(options)
 
 	if options.MaxTries != maxTries {
-		t.Errorf("MaxTries() did not set the max tries on RetryOptions correcty. Expected %v, got %v.", maxTries, options.MaxTries)
+		t.Errorf("MaxTries() did not set the max tries on RetryOptions correctly. Expected %v, got %v.", maxTries, options.MaxTries)
 	}
 }
 
@@ -42,7 +42,7 @@ func TestTimeoutOption(t *testing.T) {
 	Timeout(timeout)(options)
 
 	if options.Timeout != timeout {
-		t.Errorf("Timeout() did not set the timeout on RetryOptions correcty. Expected %v, got %v.", timeout, options.Timeout)
+		t.Errorf("Timeout() did not set the timeout on RetryOptions correctly. Expected %v, got %v.", timeout, options.Timeout)
 	}
 }
 
@@ -82,7 +82,7 @@ func TestReturnChannelOption(t *testing.T) {
 	ReturnChannel(returnChannel)(options)
 
 	if options.ReturnChannel != returnChannel {
-		t.Errorf("ReturnChannel() did not set the return channel on RetryOptions correcty. Expected %v, got %v.", returnChannel, options.ReturnChannel)
+		t.Errorf("ReturnChannel() did not set the return channel on RetryOptions correctly. Expected %v, got %v.", returnChannel, options.ReturnChannel)
 	}
 }
 

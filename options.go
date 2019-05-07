@@ -63,7 +63,7 @@ func Timeout(t time.Duration) RetryOption {
 }
 
 // AfterRetry sets the AfterRetry function which is called with the last
-// occuring error after every retry.
+// occurring error after every retry.
 func AfterRetry(afterRetry func(err error)) RetryOption {
 	return func(options *RetryOptions) {
 		options.AfterRetry = afterRetry
@@ -71,7 +71,7 @@ func AfterRetry(afterRetry func(err error)) RetryOption {
 }
 
 // AfterRetryLimit sets the AfterRetryLimit function which is called with the
-// last occuring error after the retry limit has been reached.
+// last occurring error after the retry limit has been reached.
 func AfterRetryLimit(afterRetryLimit func(err error)) RetryOption {
 	return func(options *RetryOptions) {
 		options.AfterRetryLimit = afterRetryLimit

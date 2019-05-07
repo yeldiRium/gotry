@@ -5,7 +5,7 @@ import "errors"
 var (
 	// ErrTimeout is used when the retrying process reaches the Timeout without
 	// succeeding.
-	ErrTimeout = errors.New("timeout occured")
+	ErrTimeout = errors.New("timeout occurred")
 	// ErrMaxTriesReached is used when the retrying process does not succeed
 	// before MaxTries is reached.
 	ErrMaxTriesReached = errors.New("max tries reached")
