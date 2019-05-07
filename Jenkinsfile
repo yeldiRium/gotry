@@ -22,6 +22,6 @@ Map<String,Closure> steps = [
     }
 ]
 
-withCredentials([string(credentialsId: 'gotry-codecov-token', variable: 'CODECOV_TOKEN') {
+withCredentials([string(credentialsId: 'gotry-codecov-token', variable: 'CODECOV_TOKEN')]) {
 	genericAutomation.generic(label, image, steps)
 }
