@@ -8,7 +8,7 @@ String image = 'golang:1.11'
 // Each step the pipeline shall execute.
 Map<String,Closure> steps = [
     "Test": {
-        sh 'make coverage'
+        sh 'make test'
         publishHTML(target: [
             allowMissing: false,
             alwaysLinkToLastBuild: false,
@@ -17,7 +17,11 @@ Map<String,Closure> steps = [
             reportFiles: 'index.html',
             reportName: 'Coverage Report'
         ])
+
+        sh 'make publish_coverage'
     }
 ]
 
-genericAutomation.generic(label, image, steps)
+withCredentials([string(credentialsId: 'gotry-codecov-token', variable: 'CODECOV_TOKEN') {
+	genericAutomation.generic(label, image, steps)
+}

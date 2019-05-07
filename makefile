@@ -6,10 +6,11 @@ format:
 
 test:
 	mkdir -p coverage
-	go test ./... -v -cover -covermode=count -coverprofile=coverage/profile
+	go test ./... -v -cover -covermode=count -coverprofile=coverage.txt
+	go tool cover -html=coverage.txt -o coverage/index.html
 
-coverage: test
-	go tool cover -html=coverage/profile -o coverage/index.html
+publish_coverage: test
+	curl -s https://codecov.io/bash | bash
 
 cleanup:
 	rm -rf coverage

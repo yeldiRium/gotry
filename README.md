@@ -1,5 +1,7 @@
 # GoTry
 
+[![codecov](https://codecov.io/gh/yeldiRium/gotry/branch/master/graph/badge.svg)](https://codecov.io/gh/yeldiRium/gotry)
+
 A small and highly flexible Go library for non-blockingly retrying potentially
 failing operations and preserving their return values once they succeed.
 
@@ -10,8 +12,6 @@ based on the latter.
 I didn't want to use either of the two because neither
 handles return values of the retried operations, which is crucial for things
 like connecting to a database that may be offline for a short period of time.
-
-Also I like my libraries tested.
 
 ## Usage
 
