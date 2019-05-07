@@ -11,9 +11,9 @@ const (
 )
 
 // RetryOptions is the struct containing all relevant options for the Try func-
-// tion. This is exported for convenience but you should not need to use it. Use
+// tion. Use
 // the `NewRetryOptionsWithDefaults()` function instead.
-type RetryOptions struct {
+type retryOptions struct {
 	Delay           time.Duration
 	MaxTries        int
 	Timeout         time.Duration
@@ -24,7 +24,7 @@ type RetryOptions struct {
 
 // RetryOption is a configuration wrapper for the Try function. It performs some
 // operation on RetryOptions, most likely setting a value.
-type RetryOption func(options *RetryOptions)
+type RetryOption func(options *retryOptions)
 
 // RetryResult is the data type that is passed back from the Try function once
 // the retried operation succeeds and returns a value.
@@ -39,7 +39,7 @@ type RetryResult struct {
 // Delay sets the Delay option and determines how long is slept between execu-
 // tions of the retried operation.
 func Delay(t time.Duration) RetryOption {
-	return func(options *RetryOptions) {
+	return func(options *retryOptions) {
 		options.Delay = t
 	}
 }
@@ -48,7 +48,7 @@ func Delay(t time.Duration) RetryOption {
 // ling executions of the retried operation before aborting and sending an error
 // to the channel.
 func MaxTries(t int) RetryOption {
-	return func(options *RetryOptions) {
+	return func(options *retryOptions) {
 		options.MaxTries = t
 	}
 }
@@ -56,7 +56,7 @@ func MaxTries(t int) RetryOption {
 // Timeout sets the Timeout option and determines for how long the operation
 // will be retried before aborting.
 func Timeout(t time.Duration) RetryOption {
-	return func(options *RetryOptions) {
+	return func(options *retryOptions) {
 		options.Timeout = t
 	}
 }
@@ -64,7 +64,7 @@ func Timeout(t time.Duration) RetryOption {
 // AfterRetry sets the AfterRetry function which is called with the last
 // occurring error after every retry.
 func AfterRetry(afterRetry func(err error)) RetryOption {
-	return func(options *RetryOptions) {
+	return func(options *retryOptions) {
 		options.AfterRetry = afterRetry
 	}
 }
@@ -72,7 +72,7 @@ func AfterRetry(afterRetry func(err error)) RetryOption {
 // AfterRetryLimit sets the AfterRetryLimit function which is called with the
 // last occurring error after the retry limit has been reached.
 func AfterRetryLimit(afterRetryLimit func(err error)) RetryOption {
-	return func(options *RetryOptions) {
+	return func(options *retryOptions) {
 		options.AfterRetryLimit = afterRetryLimit
 	}
 }
@@ -80,15 +80,15 @@ func AfterRetryLimit(afterRetryLimit func(err error)) RetryOption {
 // AfterTimeout sets the AfterTimeout function which is called once the retry
 // operation times out.
 func AfterTimeout(afterTimeout func(err error)) RetryOption {
-	return func(options *RetryOptions) {
+	return func(options *retryOptions) {
 		options.AfterTimeout = afterTimeout
 	}
 }
 
 // NewRetryOptionsWithDefault builds a RetryOptions struct with default values
 // and applies all given RetryOptions to it.
-func NewRetryOptionsWithDefault(options ...RetryOption) *RetryOptions {
-	retryOptions := &RetryOptions{
+func NewRetryOptionsWithDefault(options ...RetryOption) *retryOptions {
+	retryOptions := &retryOptions{
 		Delay:           defaultDelay,
 		MaxTries:        defaultMaxTries,
 		Timeout:         defaultTimeout,

@@ -5,8 +5,8 @@ import (
 	"time"
 )
 
-var setupDefaultOptions = func() *RetryOptions {
-	return &RetryOptions{
+var setupDefaultOptions = func() *retryOptions {
+	return &retryOptions{
 		Delay:           time.Duration(50) * time.Millisecond,
 		Timeout:         time.Duration(10) * time.Second,
 		MaxTries:        10,

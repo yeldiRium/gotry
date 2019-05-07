@@ -57,7 +57,7 @@ func Try(
 	}
 }
 
-func isTimedOut(options *RetryOptions, timeout <-chan time.Time) bool {
+func isTimedOut(options *retryOptions, timeout <-chan time.Time) bool {
 	select {
 	case <-timeout:
 		return true
@@ -68,20 +68,20 @@ func isTimedOut(options *RetryOptions, timeout <-chan time.Time) bool {
 
 // HandleTimeout by calling the callback if it exists and then sending an error
 // to the resultChannel.
-func handleTimeout(options *RetryOptions, resultChannel chan *RetryResult, lastError error) {
+func handleTimeout(options *retryOptions, resultChannel chan *RetryResult, lastError error) {
 	if options.AfterTimeout != nil {
 		options.AfterTimeout(lastError)
 	}
 	sendError(resultChannel, lastError, ErrTimeout)
 }
 
-func isMaxTriesReached(options *RetryOptions, tryCount int) bool {
+func isMaxTriesReached(options *retryOptions, tryCount int) bool {
 	return tryCount >= options.MaxTries
 }
 
 // HandleMaxTries by calling the callback if it exists and then sending an error
 // to the resultChannel.
-func handleMaxTries(options *RetryOptions, resultChannel chan *RetryResult, lastError error) {
+func handleMaxTries(options *retryOptions, resultChannel chan *RetryResult, lastError error) {
 	if options.AfterRetryLimit != nil {
 		options.AfterRetryLimit(lastError)
 	}
