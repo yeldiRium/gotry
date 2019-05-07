@@ -184,6 +184,32 @@ func TestCallingTryWithNilAsFReturnsError(t *testing.T) {
 	}
 }
 
+func TestResultChannelIsClosedAfterStopping(t *testing.T) {
+	op := func() (interface{}, error) {
+		return nil, errors.New("some error")
+	}
+
+	resultChannel, err := Try(
+		op,
+		MaxTries(1),
+		Delay(time.Duration(500)*time.Millisecond),
+	)
+	if err != nil {
+		t.Errorf("Try returned an error but was called correctly: %v", err)
+	}
+
+	// Get the first, expected result.
+	firstResult := <-resultChannel
+	if firstResult.StopReason != ErrMaxTriesReached {
+		t.Errorf("Try stopped with unexpected reason. Was %v, expected %v.", firstResult.StopReason, ErrMaxTriesReached)
+	}
+
+	_, ok := <-resultChannel
+	if ok {
+		t.Errorf("ResultChannel is still open after retrieving a result.")
+	}
+}
+
 /*
 TODO: make this test pass. this library needs to be able to handle long,
 blocking operations. it is goTRY and should absolutely be usable for single-exe-
