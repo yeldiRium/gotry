@@ -55,3 +55,15 @@ func main() {
 ```
 
 Take a look at the [available options](./options.go) for more.
+
+## Known Issues / Future Goals
+
+* Currently operations that are long and blocking block the Try function and delay aborting due to timeouts.
+
+  I.e. if I call Try(op) with op being a complicated computation that takes a while but I want to set a timeout for it,
+  the ErrTimeout can at the earliest be returned after one full execution of f.
+  
+  There is already a commented out test for this in [gotry_test.go](./gotry_test.go).
+
+  This will probably require a rewrite of the `Try` logic so that `f` is run in another goroutine and raced against the
+  timeout.

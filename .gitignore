@@ -1,1 +1,7 @@
+# IDE
+.idea
+.vscode
+
+# output
 coverage
+coverage.txt

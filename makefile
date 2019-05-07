@@ -9,8 +9,9 @@ test:
 	go test ./... -v -cover -covermode=count -coverprofile=coverage.txt
 	go tool cover -html=coverage.txt -o coverage/index.html
 
-publish_coverage: test
+test_and_publish_coverage: test
 	curl -s https://codecov.io/bash | bash
 
 cleanup:
 	rm -rf coverage
+	rm -f coverage.txt

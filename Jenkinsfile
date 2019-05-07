@@ -8,7 +8,7 @@ String image = 'golang:1.11'
 // Each step the pipeline shall execute.
 Map<String,Closure> steps = [
     "Test": {
-        sh 'make test'
+        sh 'make test_and_publish_coverage'
         publishHTML(target: [
             allowMissing: false,
             alwaysLinkToLastBuild: false,
@@ -17,8 +17,6 @@ Map<String,Closure> steps = [
             reportFiles: 'index.html',
             reportName: 'Coverage Report'
         ])
-
-        sh 'make publish_coverage'
     }
 ]
 
