@@ -36,28 +36,22 @@ func Try(f func() (interface{}, error), options ...RetryOption) (<-chan *RetryRe
 		}
 
 		for {
-			if tryCount >= retryOptions.MaxTries {
-				if retryOptions.AfterRetryLimit != nil {
-					retryOptions.AfterRetryLimit(lastError)
+			if reason := shouldAbort(tryCount, timeout, retryOptions); reason != nil {
+				switch reason {
+				case ErrTimeout:
+					if retryOptions.AfterTimeout != nil {
+						retryOptions.AfterTimeout(lastError)
+					}
+				case ErrMaxTriesReached:
+					if retryOptions.AfterRetryLimit != nil {
+						retryOptions.AfterRetryLimit(lastError)
+					}
 				}
 				resultChannel <- &RetryResult{
-					StopReason: ErrMaxTriesReached,
+					StopReason: reason,
 					LastError:  lastError,
 				}
 				return
-			}
-
-			select {
-			case <-timeout:
-				if retryOptions.AfterTimeout != nil {
-					retryOptions.AfterTimeout(lastError)
-				}
-				resultChannel <- &RetryResult{
-					StopReason: ErrTimeout,
-					LastError:  lastError,
-				}
-				return
-			default:
 			}
 
 			tryCount++
@@ -77,4 +71,18 @@ func Try(f func() (interface{}, error), options ...RetryOption) (<-chan *RetryRe
 		}
 	}()
 	return resultChannel, nil
+}
+
+// Checks whether MaxTries or Timeout was reached and returns fitting error or nil, if all is well.
+func shouldAbort(tryCount int, timeout <-chan time.Time, options *RetryOptions) error {
+	if tryCount >= options.MaxTries {
+		return ErrMaxTriesReached
+	}
+
+	select {
+	case <-timeout:
+		return ErrTimeout
+	default:
+		return nil
+	}
 }
