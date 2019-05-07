@@ -27,8 +27,9 @@ func Try(f func() (interface{}, error), options ...RetryOption) (<-chan *RetryRe
 	resultChannel := make(chan *RetryResult)
 	go func() {
 		tryCount := 0
-		var timeout <-chan time.Time
 		var lastError error
+		var timeout <-chan time.Time
+		defer close(resultChannel)
 
 		if retryOptions.Timeout > 0 {
 			timeout = time.After(retryOptions.Timeout)
@@ -43,7 +44,6 @@ func Try(f func() (interface{}, error), options ...RetryOption) (<-chan *RetryRe
 					StopReason: ErrMaxTriesReached,
 					LastError:  lastError,
 				}
-				close(resultChannel)
 				return
 			}
 
@@ -56,7 +56,6 @@ func Try(f func() (interface{}, error), options ...RetryOption) (<-chan *RetryRe
 					StopReason: ErrTimeout,
 					LastError:  lastError,
 				}
-				close(resultChannel)
 				return
 			default:
 			}
@@ -74,7 +73,6 @@ func Try(f func() (interface{}, error), options ...RetryOption) (<-chan *RetryRe
 			resultChannel <- &RetryResult{
 				Value: value,
 			}
-			close(resultChannel)
 			return
 		}
 	}()
