@@ -24,13 +24,12 @@ func TestSucceedingTryWithDefaultValues(t *testing.T) {
 		retryCount++
 	}
 
-	resultChannel, err := Try(
+	resultChannel := make(chan *RetryResult)
+	go Try(
 		op,
+		resultChannel,
 		AfterRetry(afterRetry),
 	)
-	if err != nil {
-		t.Errorf("Try returned an error but was called correctly: %v", err)
-	}
 
 	result := <-resultChannel
 	if result.StopReason != nil {
@@ -52,14 +51,12 @@ func TestFailingWithTooManyTries(t *testing.T) {
 		retryLimitCallbackCalled = true
 	}
 
-	resultChannel, err := Try(
+	resultChannel := make(chan *RetryResult)
+	go Try(
 		op,
+		resultChannel,
 		AfterRetryLimit(retryLimitCallback),
 	)
-	if err != nil {
-		t.Errorf("Try returned an error but was called correctly: %v", err)
-	}
-
 	result := <-resultChannel
 	if result.Value != nil {
 		t.Errorf("Retry returned a value but should not have: %v", result.Value)
@@ -89,15 +86,14 @@ func TestFailingWithTimeout(t *testing.T) {
 		}
 	}
 
-	resultChannel, err := Try(
+	resultChannel := make(chan *RetryResult)
+	go Try(
 		op,
+		resultChannel,
 		Timeout(time.Duration(1)*time.Second),
 		Delay(time.Duration(500)*time.Millisecond),
 		AfterTimeout(timeoutCallback),
 	)
-	if err != nil {
-		t.Errorf("Try returned an error but was called correctly: %v", err)
-	}
 
 	result := <-resultChannel
 	if result.Value != nil {
@@ -133,14 +129,13 @@ func TestRetryCallback(t *testing.T) {
 		}
 	}
 
-	resultChannel, err := Try(
+	resultChannel := make(chan *RetryResult)
+	go Try(
 		op,
+		resultChannel,
 		MaxTries(5),
 		AfterRetry(retryCallback),
 	)
-	if err != nil {
-		t.Errorf("Try returned an error but was called correctly: %v", err)
-	}
 
 	<-resultChannel
 	if retryCallbackCount != 4 {
@@ -162,10 +157,8 @@ func TestTypecastingAfterSucceeding(t *testing.T) {
 		return returnStruct, nil
 	}
 
-	resultChannel, err := Try(op)
-	if err != nil {
-		t.Errorf("Try returned an error but was called correctly: %v", err)
-	}
+	resultChannel := make(chan *RetryResult)
+	go Try(op, resultChannel)
 
 	result := <-resultChannel
 	mockStructValue := result.Value.(*MockStruct)
@@ -174,39 +167,6 @@ func TestTypecastingAfterSucceeding(t *testing.T) {
 	}
 	if mockStructValue.Thang != 3 {
 		t.Errorf("Result was not as expected. Got %v, expected %v.", mockStructValue.Thang, returnStruct.Thang)
-	}
-}
-
-func TestCallingTryWithNilAsFReturnsError(t *testing.T) {
-	_, err := Try(nil)
-	if err != ErrFIsMissing {
-		t.Errorf("Calling Try with nil resulted in unexpected error %v. Expected %v.", err, ErrFIsMissing)
-	}
-}
-
-func TestResultChannelIsClosedAfterStopping(t *testing.T) {
-	op := func() (interface{}, error) {
-		return nil, errors.New("some error")
-	}
-
-	resultChannel, err := Try(
-		op,
-		MaxTries(1),
-		Delay(time.Duration(500)*time.Millisecond),
-	)
-	if err != nil {
-		t.Errorf("Try returned an error but was called correctly: %v", err)
-	}
-
-	// Get the first, expected result.
-	firstResult := <-resultChannel
-	if firstResult.StopReason != ErrMaxTriesReached {
-		t.Errorf("Try stopped with unexpected reason. Was %v, expected %v.", firstResult.StopReason, ErrMaxTriesReached)
-	}
-
-	_, ok := <-resultChannel
-	if ok {
-		t.Errorf("ResultChannel is still open after retrieving a result.")
 	}
 }
 
@@ -221,13 +181,12 @@ func TestFailingWithLongBlockingOperation(t *testing.T) {
 		return nil, errors.New("this error should not be returned since retry should abort earlier")
 	}
 
-	resultChannel, err := Try(
+	resultChannel := make(chan *RetryResult)
+	go Try(
 		op,
+		resultChannel,
 		Timeout(time.Duration(1)*time.Second),
 	)
-	if err != nil {
-		t.Errorf("Try returned an error but was called correctly: %v", err)
-	}
 
 	result := <-resultChannel
 	if result.Value != nil {

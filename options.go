@@ -20,7 +20,6 @@ type RetryOptions struct {
 	AfterRetry      func(error)
 	AfterRetryLimit func(error)
 	AfterTimeout    func(error)
-	ReturnChannel   chan *RetryResult
 }
 
 // RetryOption is a configuration wrapper for the Try function. It performs some
@@ -86,15 +85,6 @@ func AfterTimeout(afterTimeout func(err error)) RetryOption {
 	}
 }
 
-// ReturnChannel sets the ReturnChannel option to which the results of the retry
-// process are sent. Use this if you want to explicitly create your own channel.
-// Otherwise one will be created.
-func ReturnChannel(returnChannel chan *RetryResult) RetryOption {
-	return func(options *RetryOptions) {
-		options.ReturnChannel = returnChannel
-	}
-}
-
 // NewRetryOptionsWithDefault builds a RetryOptions struct with default values
 // and applies all given RetryOptions to it.
 func NewRetryOptionsWithDefault(options ...RetryOption) *RetryOptions {
@@ -105,7 +95,6 @@ func NewRetryOptionsWithDefault(options ...RetryOption) *RetryOptions {
 		AfterRetry:      nil,
 		AfterRetryLimit: nil,
 		AfterTimeout:    nil,
-		ReturnChannel:   make(chan *RetryResult),
 	}
 
 	for _, option := range options {

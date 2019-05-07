@@ -17,16 +17,20 @@ like connecting to a database that may be offline for a short period of time.
 
 ## Usage
 
+You decide whether you want to run Try as a goroutine or not.
+
 ```go
 package something
 
 import "github.com/yeldiRium/gotry"
 
 func main() {
-    resultChannel, err := gotry.Try(
+    resultChannel := make(chan *RetryResult)
+    go gotry.Try(
         func() (*ConnectionHandle, error) {
             return connectToSomeDatabaseWhichMightFailButOtherwiseReturnsAHandle()
         },
+        resultChannel,
     )
 
     // do some other things
@@ -64,7 +68,7 @@ Take a look at the [available options](./options.go) for more.
 
   I.e. if I call Try(op) with op being a complicated computation that takes a while but I want to set a timeout for it,
   the ErrTimeout can at the earliest be returned after one full execution of f.
-  
+
   There is already a commented out test for this in [gotry_test.go](./gotry_test.go).
 
   This will probably require a rewrite of the `Try` logic so that `f` is run in another goroutine and raced against the

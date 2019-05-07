@@ -12,7 +12,6 @@ var setupDefaultOptions = func() *RetryOptions {
 		MaxTries:        10,
 		AfterRetry:      nil,
 		AfterRetryLimit: nil,
-		ReturnChannel:   make(chan *RetryResult),
 	}
 }
 
@@ -76,16 +75,6 @@ func TestAfterTimeoutOption(t *testing.T) {
 	}
 }
 
-func TestReturnChannelOption(t *testing.T) {
-	options := setupDefaultOptions()
-	returnChannel := make(chan *RetryResult)
-	ReturnChannel(returnChannel)(options)
-
-	if options.ReturnChannel != returnChannel {
-		t.Errorf("ReturnChannel() did not set the return channel on RetryOptions correctly. Expected %v, got %v.", returnChannel, options.ReturnChannel)
-	}
-}
-
 func TestNewRetryOptionsWithDefault(t *testing.T) {
 	options := NewRetryOptionsWithDefault()
 
@@ -104,9 +93,6 @@ func TestNewRetryOptionsWithDefault(t *testing.T) {
 	if options.AfterRetryLimit != nil {
 		t.Error("The default AfterRetryLimit function was not set correctly.")
 	}
-	if options.ReturnChannel == nil {
-		t.Errorf("The default ReturnChannel was not set.")
-	}
 }
 
 func TestNewRetryOptionsWithDefaultAndAdditionalOptions(t *testing.T) {
@@ -115,10 +101,8 @@ func TestNewRetryOptionsWithDefaultAndAdditionalOptions(t *testing.T) {
 	timeout := time.Duration(20) * time.Hour
 	afterRetry := func(err error) {}
 	afterRetryLimit := func(err error) {}
-	returnChannel := make(chan *RetryResult)
 
 	options := NewRetryOptionsWithDefault(
-		ReturnChannel(returnChannel),
 		Delay(delay),
 		AfterRetry(afterRetry),
 		MaxTries(maxTries),
@@ -140,8 +124,5 @@ func TestNewRetryOptionsWithDefaultAndAdditionalOptions(t *testing.T) {
 	}
 	if options.AfterRetryLimit == nil {
 		t.Error("The default AfterRetryLimit function was not set correctly.")
-	}
-	if options.ReturnChannel != returnChannel {
-		t.Errorf("The default ReturnChannel was not set.")
 	}
 }
