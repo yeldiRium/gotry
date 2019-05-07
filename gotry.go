@@ -31,21 +31,12 @@ func Try(
 	}
 
 	for {
-		if reason := shouldAbort(tryCount, timeout, retryOptions); reason != nil {
-			switch reason {
-			case ErrTimeout:
-				if retryOptions.AfterTimeout != nil {
-					retryOptions.AfterTimeout(lastError)
-				}
-			case ErrMaxTriesReached:
-				if retryOptions.AfterRetryLimit != nil {
-					retryOptions.AfterRetryLimit(lastError)
-				}
-			}
-			resultChannel <- &RetryResult{
-				StopReason: reason,
-				LastError:  lastError,
-			}
+		if isMaxTriesReached(retryOptions, tryCount) {
+			handleMaxTries(retryOptions, resultChannel, lastError)
+			return
+		}
+		if isTimedOut(retryOptions, timeout) {
+			handleTimeout(retryOptions, resultChannel, lastError)
 			return
 		}
 
@@ -66,16 +57,43 @@ func Try(
 	}
 }
 
-// Checks whether MaxTries or Timeout was reached and returns fitting error or nil, if all is well.
-func shouldAbort(tryCount int, timeout <-chan time.Time, options *RetryOptions) error {
-	if tryCount >= options.MaxTries {
-		return ErrMaxTriesReached
-	}
-
+func isTimedOut(options *RetryOptions, timeout <-chan time.Time) bool {
 	select {
 	case <-timeout:
-		return ErrTimeout
+		return true
 	default:
-		return nil
+		return false
+	}
+}
+
+// HandleTimeout by calling the callback if it exists and then sending an error
+// to the resultChannel.
+func handleTimeout(options *RetryOptions, resultChannel chan *RetryResult, lastError error) {
+	if options.AfterTimeout != nil {
+		options.AfterTimeout(lastError)
+	}
+	sendError(resultChannel, lastError, ErrTimeout)
+}
+
+func isMaxTriesReached(options *RetryOptions, tryCount int) bool {
+	return tryCount >= options.MaxTries
+}
+
+// HandleMaxTries by calling the callback if it exists and then sending an error
+// to the resultChannel.
+func handleMaxTries(options *RetryOptions, resultChannel chan *RetryResult, lastError error) {
+	if options.AfterRetryLimit != nil {
+		options.AfterRetryLimit(lastError)
+	}
+	sendError(resultChannel, lastError, ErrMaxTriesReached)
+}
+
+// SendError sends an error in a RetryResult to the resultChannel. The error
+// contains information about why the retrying was stopped and what error the
+// retried operation last returned.
+func sendError(resultChannel chan *RetryResult, lastError error, stopReason error) {
+	resultChannel <- &RetryResult{
+		StopReason: stopReason,
+		LastError:  lastError,
 	}
 }
