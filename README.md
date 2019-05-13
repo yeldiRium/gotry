@@ -75,3 +75,4 @@ Take a look at the [available options](./options.go) for more.
 
   This will probably require a rewrite of the `Try` logic so that `f` is run in another goroutine and raced against the
   timeout.
+* Rewriting this using [Contracts](https://go.googlesource.com/proposal/+/master/design/go2draft-contracts.md) would make it even better, since we'd have type safety at compile time.
