@@ -16,6 +16,7 @@ based on the latter.
 I didn't want to use either of the two because neither
 handles return values of the retried operations, which is crucial for things
 like connecting to a database that may be offline for a short period of time.
+(I retract that statement but leave it in for posteriority after reading [this wonderful comment](https://www.reddit.com/r/golang/comments/bmi4ua/gotry_a_small_library_for_retrying_operations_and/end6p3e).)
 
 ## Usage
 
